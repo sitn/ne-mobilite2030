@@ -1,0 +1,59 @@
+<?php $page = 'vision'; $title='La vision'; include 'common/header.php'; ?>
+
+<section id="vision">
+	<article class="vision-1 bg-blue bg-transparent" id="1-canton">
+		<div class="wrapper clearfix">
+			<div class="col_6">
+				<h1>LA VISION</h1>
+				<h2>Un canton, un espace</h2>
+				<h4>Pour prétendre à un rôle moteur, le canton de Neuchâtel doit être uni!</h4>
+				<p>Le considérer comme un seul espace, constitué de quatre régions – le Littoral, les Montagnes, le Val-de-Ruz et le Val-de-Travers – aux spécificités et aux rôles complémentaires est une vision qui répondra aux enjeux de l'avenir ainsi qu'aux besoins des Neuchâteloises et des Neuchâtelois.</p>
+				<p>Pour le permettre, le réseau de mobilité du canton de Neuchâtel doit être amélioré. Par un RER attractif, un réseau de routes cantonales et nationales efficace et le développement de la mobilité douce, le gouvernement veut concrétiser la complémentarité route/rail et atteindre la croissance qualitative grâce à ces quatre piliers.</p>
+				<p>Le Conseil d'Etat attend de la stratégie <strong>"Neuchâtel Mobilité 2030"</strong> qu'elle rassemble régions et agglomérations, avec au final un espace fonctionnel unique. Grâce à une mobilité efficace, le canton de Neuchâtel veut surpasser ses antagonismes, rapprocher ses régions et rayonner vers l'extérieur avec comme moteur la vision "Un canton, un espace".</p>
+			</div>
+			<div class="col_6">
+				<img class="img-responsive" src="img/un-canton.svg" />
+			</div>
+		</div>
+	</article>
+	<article id="opportunite">
+		<div class="wrapper clearfix">
+			<div class="col_6 bg-white">
+				<h2>L'opportunité fédérale</h2>
+				<h4>En 2014, le peuple suisse a accepté à une nette majorité le projet de financement et d'aménagement de l'infrastructure ferroviaire (FAIF).</h4>
+				<p>Les coûts d'exploitation, d'entretien et d'extension des infrastructures ferroviaires seront désormais couverts par un fonds unique, le FIF (Fonds d'Infrastructure Ferroviaire). Quant au volet routier, dans le but d'assurer le financement durable des routes nationales et du trafic d'agglomération, le Conseil fédéral a décidé de créer un fonds. Il s'agit du fonds pour les routes nationales et le trafic d'agglomération (FORTA).</p>
+				<p>Les démarches de la Confédération pour modifier les mécanismes de financement des infrastructures ferroviaires ou routières du pays sont en cours. Il s'agit d'une chance pour notre canton! C'est pourquoi il entend s'appuyer sur cette opportunité pour réaliser notamment le RER et la ligne directe, ainsi que les contournements routiers des deux villes des Montagnes et la reprise de la H20 en route nationale. Les coûts de ces réalisations pourraient en effet être repris par la Confédération.Pour cela, il faut qu'elle retienne les projets déposés par le canton de Neuchâtel.</p>
+				<p>Un vote populaire favorable à la stratégie du Conseil d'Etat serait un signal fort et clair envoyé à Berne et aux Chambres fédérales.</p>
+			</div>
+		</div>
+	</article>
+	<article class="bg-blue" id="4-piliers">
+		<div class="wrapper clearfix">
+			<div class="col_6">
+				<h5><strong>4</strong> Piliers</h5>
+				<div class="col_stretched">
+					<h2>Neuchâtel Mobilité 2030, c’est quoi?</h2>
+					<p>Une stratégie de mobilité pour le canton construite sur 4 piliers.</p>
+					<p>Une adaptation des infrastructures aux besoins en mobilité du canton pour le long terme et une planification financière sur vingt ans en faveur de projets concrets</p>
+				</div>
+				<h5>Une planification financière sur<br /><strong>20 ans</strong></h5>
+			</div>
+			<div class="col_6">
+				<h2>Les 4 piliers</h2>
+				<p><strong>"Neuchâtel Mobilité 2030"</strong> est une stratégie cantonale qui permettra de rapprocher concrètement les régions et les agglomérations du canton. Elle concrétisera la complémentarité route/rail sur la base de quatre piliers proposés par le Conseil d'Etat: </p>
+
+				<ul>
+					<li><a href="piliers.php#rer">le RER neuchâtelois</a></li>
+					<li><a href="piliers.php#routes-nationales">les routes nationales</a></li>
+					<li><a href="piliers.php#routes-cantonales">les routes cantonales</a></li>
+					<li><a href="piliers.php#mobilite-douce">la mobilité douce</a></li>
+				</ul>
+				<p>Ces piliers sont composés de projets d'infrastructures concrets qui sont planifiés sur les vingt prochaines années. Ainsi, il s'agit d'une stratégie inscrite dans la durée et qui repose sur une vision de la mobilité qui rend complémentaires les différents modes de transports.</p> 
+				<p>L'ambition est d'améliorer la mobilité des Neuchâteloises et Neuchâtelois en garantissant la fluidité des déplacements et la connexion du canton aux grands réseaux de transports qui structurent la Suisse et l'Europe.</p>
+				<p><a href="piliers.php" class="btn">Les 4 piliers</a></p>
+			</div>
+		</div>
+	</article>
+</section>
+
+<?php include 'common/footer.php'; ?>

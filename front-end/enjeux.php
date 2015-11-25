@@ -1,0 +1,52 @@
+<?php $page = 'enjeux'; $title='Les enjeux'; include 'common/header.php'; ?>
+
+<section id="enjeux">
+	<article id="se-positionner">
+		<div class="wrapper clearfix">
+			<div class="col_6 bg-white">
+				<h1>LES ENJEUX</h1>
+				<h2>Améliorer la qualité de vie des citoyennes et des citoyens </h2>
+				<h4>La création de réseaux de mobilité efficaces renforcera les synergies en faveur de la formation, du tourisme, des centres de compétences économiques ou encore des installations de loisirs.</h4>
+				<p>En développant l'accès aux infrastructures de ces domaines, le Conseil d'Etat souhaite améliorer la qualité de vie de toute la population neuchâteloise. Avec plus de 20'000 véhicules qui transitent quotidiennement en ville du Locle, l'impact du trafic sur les riverains peut également s'avérer néfaste.</p>
+				<p>Par sa mise en œuvre, la stratégie de mobilité fluidifiera les flux sur tout le territoire. Elle évitera ainsi à beaucoup d'habitants et de pendulaires de subir engorgements et embouteillages.</p>
+				<p>Au final, mieux maîtriser ses voies de communication c'est contenir les effets néfastes de la mobilité liés au bruit et à la sécurité. Mais, surtout, c'est utiliser la mobilité comme un outil capable d'améliorer l'accès à tous les domaines de la société au bénéfice des jeunes et des retraités, des actifs et des étudiants, des pendulaires ou des touristes.</p>
+			</div>
+		</div>
+	</article>
+	<article class="bg-blue bg-transparent" id="qualite-de-vie">
+		<div class="wrapper clearfix">
+			<div class="col_6 col_offset_6">
+				<h2>Se positionner </h2> 
+				<h4>"Neuchâtel ne peut plus être considéré comme un espace fermé et se suffisant à lui-même.</h4> 
+				<p>Tous les domaines d'activités attestent de l'insertion de notre canton dans des espaces plus vastes et de l'influence de nos voisins sur notre propre développement".</p>
+				<p>Cette affirmation du programme de législature est en fait une ambition. Au-delà du développement de la mobilité, "Neuchâtel Mobilité 2030" cherche à relier le canton aux espaces métropolitains et au réseau des villes suisses et européennes.</p>
+				<p>Il existe une place au cœur de l'Arc jurassien pour une nouvelle agglomération forte: un trait d'union entre le Plateau suisse et les régions limitrophes de l'Europe.</p>
+				<p>A l’heure où la Confédération a les clés des principaux projets d’infrastructure en mains, c’est le moment d'envoyer un signal fort et favorable à des voies de communication du XXIème siècle. La population neuchâteloise aura la chance de déclarer à la Suisse sa volonté de rapprocher le canton du reste du pays lors de la votation prévue en 2016.</p>
+			</div>
+		</div>
+	</article>
+	<article class="bg-white" id="prestations">
+		<div class="wrapper clearfix">
+			<div class="col_6">
+				<h2>Accéder aux prestations</h2>
+				<h4>L'administration en ligne permet à chacune et chacun d'accéder depuis chez soi à de nombreuses prestations fournies par l'Etat.</h4>
+				<p>Il n'en demeure qu'une présence physique est indispensable pour de nombreux services, tels que l'enseignement ou la santé. En ce sens, la mise à disposition d'un réseau de transports performant est la clé de toute recherche d'économie dans la production des biens et services.</p> 
+				<p>Avec cette stratégie de mobilité, le Conseil d'Etat entend aussi rapprocher l'administration de ses administrés. </p>
+			</div>
+		</div>
+	</article>
+	<article id="economie">
+		<div class="wrapper clearfix">
+			<div class="col_6 col_offset_6 bg-blue bg-transparent">
+				<h2>Développer l'économie</h2>
+				<h4>Le tissu industriel de l'Arc jurassien et de l'industrie d'exportation bénéficie à toute la Suisse.</h4>
+				<p>Comme pour chacune des régions du canton, les Montagnes neuchâteloises concentrent un savoir-faire et des compétences-clés qui profitent à l'ensemble de la place industrielle helvétique. Pour rester concurrentiel dans un marché mondialisé, il est essentiel de disposer des conditions-cadre adéquates.</p>
+				<p>Parmi elles, la garantie de voies de communication efficaces vers et depuis les principales villes du pays, les aéroports et les grandes métropoles européennes est indispensable.</p>
+				<p>A l’heure où le canton figure en tête des régions qui créent le plus d’emplois, malgré la force du franc, l’attractivité de l’ensemble de la place économique neuchâteloise se doit d’être sans cesse améliorée.</p>
+				<p><a href="financements.php" class="btn">Les financements</a></p>
+			</div>
+		</div>
+	</article>
+</section>
+
+<?php include 'common/footer.php'; ?>
