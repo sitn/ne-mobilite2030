@@ -1,0 +1,147 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html lang="fr" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="fr" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="fr" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="fr" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>NE Mobilité 2030 - {{page.title}}</title>
+        <meta name="description" content="Relier les régions et les agglomérations de notre canton est une volonté du Conseil d'Etat. Pour y parvenir, il a développé la stratégie cantonale &quot;Neuchâtel Mobilité 2030&quot; soutenue par le Grand Conseil.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="map/static/libs/ol3/ol.css" type="text/css">
+
+        <script src="js/modernizr-3.2.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <nav>
+            <div class="wrapper">
+                <div class="col_12">
+                    <a href="index.html" id="logo"><img src="img/logo-ne2030.svg" /></a>
+                    <a href="#" id="nav-collapser"></a>
+                    <div id="menus">
+                        <ul id="second-nav">
+                            <li><a href="#">Liens <img src="img/icon-links.svg" /></a></li>
+                            <li><a href="votation.html#calendrier">Agenda <img src="img/icon-cal.svg" /></a></li>
+                            <li><a href="#">FAQ <img src="img/icon-faq.svg" /></a></li>
+                        </ul>
+                        <ul id="main-nav">
+                            <li class="{{page.menu-index}}"><a href="index.html">La carte</a>
+                            </li>
+                            <li class="{{page.menu-vision}}"><a href="vision.html">La vision</a>
+                                <ul>
+                                    <li><a href="vision.html#1-canton">1 canton, 1 espace</a></li>
+                                    <li><a href="vision.html#opportunite">L'opportunité fédérale</a></li>
+                                    <li><a href="vision.html#4-piliers">4 piliers</a></li>
+                                </ul>
+                            </li>
+                            <li class="{{page.menu-piliers}}"><a href="piliers.html">Les 4 piliers</a>
+                                <ul>
+                                    <li><a href="piliers.html#rer">RER</a></li>
+                                    <li><a href="piliers.html#routes-cantonales">Routes cantonales</a></li>
+                                    <li><a href="piliers.html#routes-nationales">Routes nationales</a></li>
+                                    <li><a href="piliers.html#mobilite-douce">Mobilité douce</a></li>
+                                </ul>
+                            </li>
+                            <li class="{{page.menu-enjeux}}"><a href="enjeux.html">Les enjeux</a>
+                                <ul>
+                                    <li><a href="enjeux.html#se-positionner">Se positionner</a></li>
+                                    <li><a href="enjeux.html#qualite-de-vie">Qualité de vie</a></li>
+                                    <li><a href="enjeux.html#prestations">Prestations</a></li>
+                                    <li><a href="enjeux.html#economie">Economie</a></li>
+                                </ul>
+                            </li>
+                            <li class="{{page.menu-financements}}"><a href="financements.html">Les financements</a>
+                                <ul>
+                                    <li><a href="financements.html#cantonal">Cantonal</a></li>
+                                    <li><a href="financements.html#federal">Fédéral</a></li>
+                                    <li><a href="financements.html#ligne-directe">Ligne directe</a></li>
+                                </ul>
+                            </li>
+                            <li class="{{page.menu-votation}}"><a href="votation.html">La votation</a>
+                                <ul>
+                                    <li><a href="votation.html#message">Message à Berne</a></li>
+                                    <li><a href="votation.html#calendrier">Calendrier politique</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        {{{content}}}
+
+        <footer>
+            <a id="footer-collapser"></a>
+            <div class="content">
+                <article id="chiffres" class="clearfix">
+                    <div class="col_1-5 no-padding chiffres-2015"><p><small>2015</small></p></div>
+                    <div class="col_1-5 no-padding chiffres-2015"><p>176’000<br /><small>habitants</small></p></div>
+                    <div class="col_1-5 no-padding chiffres-2015"><p>85’000<br /><small>emplois plein temps</small></p></div>
+                    <div class="col_3 no-padding">
+                        <div class="img-wrapper">
+                            <img class="chiffres-2015" src="img/chiffres-2015.svg" />
+                            <img class="chiffres-2040" src="img/chiffres-2040.svg" />
+                        </div>
+                    </div>
+                    <div class="col_1-5 no-padding chiffres-2040 red"><p><small>2040</small></p></div>
+                    <div class="col_1-5 no-padding chiffres-2040 red"><p>200’000<br /><small>habitants</small></p></div>
+                    <div class="col_1-5 no-padding chiffres-2040 red"><p>100’000<br /><small>emplois plein temps</small></p></div>
+                </article>
+                <div class="wrapper">
+                    <div class="row">
+                        <div class="col_6 claim">
+                            <a href="#"><img src="img/logo-ne2030-footer.svg" /></a>
+                            <h1>nous sommes un.<br />un canton, un espace</h1>
+                            <p>Affirmons notre contribution à la prospérité de la Suisse. Positionnons le second canton exportateur du pays sur la carte. Dessinons sa stratégie de mobilité. <strong>mobilisons-nous!</strong></p>
+                        </div>
+                        <div class="col_6 contact">
+                            <h3>Suivez-nous</h3>
+                            <h3>Pour toutes autres question</h3>
+                            <p><a href="mailto:contact@nemobilite2030.ch">contact@nemobilite2030.ch</a></p>
+                            <p><a href="#"><img id="logo-nech" src="img/logo-nech.svg" /></a></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="copyright-links">
+                    <div class="wrapper clearfix">
+                        <div class="col_12">
+                            <p class="pull-left">© DDTE NE mobilité 2030</p>
+                            <p class="pull-right"><a href="#">Legal mentions</a> - <a href="#">Credits</a> - <a href="#">Sitemap</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="js/jquery-1.11.2.min.js"></script>
+        <script src="js/owl.carousel.min.js"></script>
+        <script src="js/jquery.inox-jpanelmenu.js"></script>
+
+        <script src="map/static/libs/proj4/proj4.js"></script>
+        <script src="map/config/EPSG21781.js"></script>
+        <script src="map/static/libs/ol3/ol.js" type="text/javascript"></script>
+        <script src="map/static/js/mb.js"></script>
+        <script src="map/config/config.js"></script>
+        <script src="map/static/js/map.js"></script>
+        
+        <script src="js/main.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+        </script>
+    </body>
+</html>
