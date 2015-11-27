@@ -243,6 +243,7 @@ mb.map.initMap = function (zoomFeatureId) {
     // Load geojson layer for high responsiveness feature query...
     mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayer, zoomFeatureId);
     mb.map.setOverlay();
+    mb.map.fullScreen();
 };
 
 /***
@@ -250,7 +251,7 @@ mb.map.initMap = function (zoomFeatureId) {
 * Method: loadGeoJson
 * Parameters: url [string]
 ***/
-mb.map.loadGeoJson = function(url){
+mb.map.loadGeoJson = function(url, zoomFeatureId){
 
     var mbStyle =  new ol.style.Style({
         fill: new ol.style.Fill({
@@ -286,10 +287,14 @@ mb.map.loadGeoJson = function(url){
             var features = gJson.readFeatures(geojson);
             mb.map.geojsonLayer.getSource().addFeatures(features);
             // Fit map extent to window
-            var vExt = mb.map.geojsonLayer.getSource().getExtent();
-            var f = mb.params.mapconfig.extentCorrection;
-            var adaptedExtent = [vExt[0] + f, vExt[1] + f, vExt[2] - f, vExt[3] - f];
-            mb.map.map.getView().fit(adaptedExtent, mb.map.map.getSize());
+            if (zoomFeatureId == 'zoom_full_extent'){
+                var vExt = mb.map.geojsonLayer.getSource().getExtent();
+                var f = mb.params.mapconfig.extentCorrection;
+                var adaptedExtent = [vExt[0] + f, vExt[1] + f, vExt[2] - f, vExt[3] - f];
+                mb.map.map.getView().fit(adaptedExtent, mb.map.map.getSize());
+            } else {
+                mb.map.zoomToFeature(zoomFeatureId);
+            }
         }
     };
     xmlhttp.open("GET", url, true);
@@ -364,3 +369,19 @@ mb.map.zoomToFeature = function (filter){
     }
 
 };
+
+/***
+* Make the map full screen
+* Method: fullScreen
+* Parameters: none
+***/
+mb.map.fullScreen = function(){
+    document.getElementById("map").style.width = "100%";
+    document.getElementById("map").style.height = "100%";
+    document.getElementById("map").style.left = "0px";
+    document.getElementById("map").style.top = "0px";
+    document.getElementById("map").style.background.color = "white";
+    document.getElementById("map").style.border = "none";
+    mb.map.map.updateSize();
+};
+
