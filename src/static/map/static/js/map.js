@@ -99,7 +99,7 @@ mb.map.initMap = function (zoomFeatureId) {
     var gjStyle =  new ol.style.Style({
         stroke: new ol.style.Stroke({
               color: 'rgba(252, 255, 0, 1)',
-              width: 10
+              width: 1
         }),
         image: new ol.style.Circle({
             radius: 5,
@@ -114,7 +114,21 @@ mb.map.initMap = function (zoomFeatureId) {
     });
 
     // Vector layer for feature highlight on mouseover & single click event
-    this.geojsonLayer = new ol.layer.Vector({
+    this.geojsonLayer_point = new ol.layer.Vector({
+        style: gjStyle,
+        opacity: 0,
+        source: new ol.source.Vector({
+        })
+    });
+    
+    this.geojsonLayer_line = new ol.layer.Vector({
+        style: gjStyle,
+        opacity: 0,
+        source: new ol.source.Vector({
+        })
+    });
+    
+    this.geojsonLayer_poly = new ol.layer.Vector({
         style: gjStyle,
         opacity: 0,
         source: new ol.source.Vector({
@@ -132,12 +146,17 @@ mb.map.initMap = function (zoomFeatureId) {
         ],
         interactions: interactions,
         target: 'map',
-        layers: [this.baseLayer, this.overlay, this.geojsonLayer],
+        layers: [this.baseLayer, this.overlay, this.geojsonLayer_poly, this.geojsonLayer_line, this.geojsonLayer_point],
         view: new ol.View({
             projection: this.mapProjection,
             resolutions: mb.params.mapconfig.resolutions
         })
     });
+    this.geojsonLayer_poly.setZIndex(1008);
+    this.geojsonLayer_line.setZIndex(1009);
+    this.geojsonLayer_point.setZIndex(1010);
+
+    this.selectFeatCollection = new ol.Collection();
 
     // Single click interaction
     var selectSingleClick = new ol.interaction.Select({
@@ -161,46 +180,12 @@ mb.map.initMap = function (zoomFeatureId) {
             }
         }
     });
-
     // Get feature info output
     selectSingleClick.on('select', function(evt){
         document.getElementById("featureInfo").style.visibility = "hidden";
         if(evt.selected.length > 0){
             selectPointerMove.getFeatures().clear();
-            var libgeo = evt.selected[0].get('libgeo');
-            var pilier = evt.selected[0].get('pilier');
-            var projet = evt.selected[0].get('projet');
-            var date_realisation = evt.selected[0].get('date_realisation');
-            var cout_total = evt.selected[0].get('cout_total');
-            var cout_canton = evt.selected[0].get('cout_canton');
-            var url_piliers = evt.selected[0].get('url_piliers');
-            var html = '';
-            if(typeof libgeo === 'undefined' || libgeo === 'null' ){
-                libgeo = 'Non renseigné';
-            }
-            html += '<p><b>' + libgeo + '</b></p>';
-            if(pilier){
-                html += '<p><b>Pilier: </b>' + pilier + '</p>';
-            }
-            if(projet){
-                html += '<p><b>Projet: </b>' + projet + '</p>';
-            }
-            if(date_realisation){
-                html += '<p><b>Date de réalisation: </b>' + date_realisation + '</p>';
-            }
-            if(cout_total){
-                html += '<p><b>Coût total: </b>' + cout_total + '</p>';
-            }
-            if(cout_canton){
-                html += '<p><b>Coût canton: </b>' + cout_canton + '</p>';
-            }
-            if(url_piliers){
-                html += '<p><a href="' + url_piliers + '">Plus d\'informations </a></p>';
-            }
-            if (html !== ''){
-                document.getElementById("featureInfo").innerHTML = html;
-                document.getElementById("featureInfo").style.visibility = "visible";
-            }
+            mb.map.setFeatureInfo(evt.selected[0]);
         } 
     });
 
@@ -209,20 +194,48 @@ mb.map.initMap = function (zoomFeatureId) {
     // Hover interaction: highlight features on mouseover if the parent layer is visible
     var selectPointerMove = new ol.interaction.Select({
         condition: ol.events.condition.pointerMove,
-        multi: false,
-        layers: [this.geojsonLayer],
+        multi: true,
+        layers: [this.geojsonLayer_poly, this.geojsonLayer_line, this.geojsonLayer_point],
+        features: mb.map.selectFeatCollection,
         filter: function(feature){
+            var fc = mb.map.selectFeatCollection.getArray();
+            var geometryFilter = true; 
+            if(fc && fc.length > 0){
+                var hasPolygon = false;
+                var hasLine = false;
+                var hasPoint = false;
+                for (var i = 0; i < fc.length; i++){
+                    if(fc[i].getGeometry().getType() == 'Polygon'){
+                        hasPolygon = true;
+                    }
+                    if(fc[i].getGeometry().getType() == 'LineString'){
+                        hasLine = true;
+                    }
+                    if(fc[i].getGeometry().getType() == 'Point'){
+                        hasPoint = true;
+                    }
+                }
+                if (hasPoint && hasLine && hasPolygon && feature.getGeometry().getType() == 'Point'){
+                    geometryFilter = true;
+                } else if (!hasPoint && hasLine && hasPolygon && feature.getGeometry().getType() == 'LineString'){
+                    geometryFilter = true;
+                } else if (!hasPoint && !hasLine && hasPolygon && feature.getGeometry().getType() == 'Polygon'){
+                    geometryFilter = true;
+                } else {
+                    geometryFilter = false;
+                }
+            }
             var layersEl = document.getElementsByName('layerId');
             var layerList = [];
 
-            for (var i=0; i<layersEl.length; i++){
-                if(layersEl[i].checked){
-                    layerList.push(layersEl[i].value.toLowerCase());
+            for (var j = 0; j<layersEl.length; j++){
+                if(layersEl[j].checked){
+                    layerList.push(layersEl[j].value.toLowerCase());
                 }
             }
 
             var selectLayerName = feature.get("layername").toLowerCase();
-            if(layerList.indexOf(selectLayerName) >= 0){
+            if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0 && geometryFilter){
                 return true;
             } else {
                 return false;
@@ -285,12 +298,22 @@ mb.map.loadGeoJson = function(url, zoomFeatureId){
             geojson =  JSON.parse(xmlhttp.responseText);
             var gJson = new ol.format.GeoJSON();
             var features = gJson.readFeatures(geojson);
-            mb.map.geojsonLayer.getSource().addFeatures(features);
+            for (var i = 0; i<features.length; i++){
+                var f = features[i];
+                if(f.getGeometry().getType() == 'Point'){
+                    mb.map.geojsonLayer_point.getSource().addFeatures([f]);
+                } else if (f.getGeometry().getType() == 'LineString') {
+                    mb.map.geojsonLayer_line.getSource().addFeatures([f]);
+                } else if (f.getGeometry().getType() == 'Polygon'){
+                    mb.map.geojsonLayer_poly.getSource().addFeatures([f]);
+                } 
+            }
+
             // Fit map extent to window
             if (zoomFeatureId == 'zoom_full_extent'){
-                var vExt = mb.map.geojsonLayer.getSource().getExtent();
-                var f = mb.params.mapconfig.extentCorrection;
-                var adaptedExtent = [vExt[0] + f, vExt[1] + f, vExt[2] - f, vExt[3] - f];
+                var vExt = mb.params.mapconfig.mapExtent;
+                var fe = mb.params.mapconfig.extentCorrection;
+                var adaptedExtent = [vExt[0] + fe, vExt[1] + fe, vExt[2] - fe, vExt[3] - fe];
                 mb.map.map.getView().fit(adaptedExtent, mb.map.map.getSize());
             } else {
                 mb.map.zoomToFeature(zoomFeatureId);
@@ -338,23 +361,44 @@ mb.map.zoomToFeature = function (filter){
         => mb.map.zoomToFeature('4ca3f933-6c2e-425d-8551-30a77c892523') Électrification La CdF - Morteau
         => mb.map.zoomToFeature('0fd5890b-c641-4d68-b599-096eba3945a6') Littorail Est
     */
-    var features = mb.map.geojsonLayer.getSource().getFeatures();
+    var features_poly = mb.map.geojsonLayer_poly.getSource().getFeatures();
+    var features_line = mb.map.geojsonLayer_line.getSource().getFeatures();
+    var features_point = mb.map.geojsonLayer_point.getSource().getFeatures();
+    // Only on feature get sele
+
     var zoomExtent;
     var featureCollection = new ol.Collection();
 
     var zoomExtents = [];
-    
-    for (var i=0; i < features.length; i++){
-        var idobj = features[i].get('idobj');
+
+    for (var i=0; i < features_poly.length; i++){
+        var idobj = features_poly[i].get('idobj');
         if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
-            zoomExtents.push(features[i].getGeometry().getExtent());
+            zoomExtents.push(features_poly[i].getGeometry().getExtent());
+            mb.map.setFeatureInfo(features_poly[i]); // for test
         }
     }
-    
+
+    for (var i=0; i < features_line.length; i++){
+        var idobj = features_line[i].get('idobj');
+        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
+            zoomExtents.push(features_line[i].getGeometry().getExtent());
+            mb.map.setFeatureInfo(features_line[i]); // for test
+        }
+    }
+
+    for (var i=0; i < features_point.length; i++){
+        var idobj = features_point[i].get('idobj');
+        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
+            zoomExtents.push(features_point[i].getGeometry().getExtent());
+            mb.map.setFeatureInfo(features_point[i]); // for test
+        }
+    }
+
     if (zoomExtents.length === 0){
         return;
     }
-    
+
     if (zoomExtents.length > 1){
         zoomExtent = zoomExtents[0];
         for (var j = 1; j < zoomExtents.length; j++){
@@ -368,6 +412,50 @@ mb.map.zoomToFeature = function (filter){
         mb.map.map.getView().fit(zoomExtent, mb.map.map.getSize());
     }
 
+};
+
+/***
+* set the featureInfo content
+* Method: setFeatureInfo
+* Parameters: feature [ol.Feature]
+***/
+mb.map.setFeatureInfo = function(feature){
+
+    document.getElementById("featureInfo").style.visibility = "hidden";
+    var libgeo = feature.get('libgeo');
+    var pilier = feature.get('pilier');
+    var projet = feature.get('projet');
+    var date_realisation = feature.get('date_realisation');
+    var cout_total = feature.get('cout_total');
+    var cout_canton = feature.get('cout_canton');
+    var url_piliers = feature.get('url_piliers');
+    var html = '';
+    if(typeof libgeo === 'undefined' || libgeo === 'null' ){
+        libgeo = '';
+    }
+    html += '<p><b>' + libgeo + '</b></p>';
+    if(pilier){
+        html += '<p><b>Pilier: </b>' + pilier + '</p>';
+    }
+    if(projet){
+        html += '<p><b>Projet: </b>' + projet + '</p>';
+    }
+    if(date_realisation){
+        html += '<p><b>Date de réalisation: </b>' + date_realisation + '</p>';
+    }
+    if(cout_total){
+        html += '<p><b>Coût total: </b>' + cout_total + '</p>';
+    }
+    if(cout_canton){
+        html += '<p><b>Coût canton: </b>' + cout_canton + '</p>';
+    }
+    if(url_piliers){
+        html += '<p><a href="' + url_piliers + '">Plus d\'informations </a></p>';
+    }
+    if (html !== ''){
+        document.getElementById("featureInfo").innerHTML = html;
+        document.getElementById("featureInfo").style.visibility = "visible";
+    }
 };
 
 /***
