@@ -8,7 +8,7 @@
 * Method: initMapView
 * Parameters: none
 ***/
-mb.map.initMap = function () {
+mb.map.initMap = function (zoomFeatureId) {
 
     // Define Map Coordinate Reference System
     this.mapProjection = ol.proj.get(mb.params.mapconfig.mapCRS);
@@ -241,7 +241,7 @@ mb.map.initMap = function () {
     this.map.addInteraction(selectPointerMove);
 
     // Load geojson layer for high responsiveness feature query...
-    mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayer);
+    mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayer, zoomFeatureId);
     mb.map.setOverlay();
     mb.map.fullScreen();
 };
