@@ -243,7 +243,6 @@ mb.map.initMap = function (zoomFeatureId) {
     // Load geojson layer for high responsiveness feature query...
     mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayer, zoomFeatureId);
     mb.map.setOverlay();
-    mb.map.fullScreen();
 };
 
 /***
@@ -295,39 +294,6 @@ mb.map.loadGeoJson = function(url){
     };
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
-};
-
-/***
-* Make the map full screen
-* Method: fullScreen
-* Parameters: none
-***/
-mb.map.fullScreen = function(){
-    document.getElementById("map").style.width = "100%";
-    document.getElementById("map").style.height = "100%";
-    document.getElementById("map").style.left = "0px";
-    document.getElementById("map").style.top = "0px";
-    document.getElementById("map").style.background.color = "white";
-    document.getElementById("fullScreen").style.visibility = "hidden";
-    document.getElementById("partScreen").style.visibility = "visible";
-    document.getElementById("map").style.border = "none";
-    mb.map.map.updateSize();
-};
-
-/***
-* Make the map part screen
-* Method: partScreen
-* Parameters: none
-***/
-mb.map.partScreen = function(){  
-    document.getElementById("map").style.width = "80%";
-    document.getElementById("map").style.height = "80%";
-    document.getElementById("map").style.left = "10%";
-    document.getElementById("map").style.top = "10%";
-    document.getElementById("map").style.border = "1px solid gray";
-    document.getElementById("fullScreen").style.visibility = "visible";
-    document.getElementById("partScreen").style.visibility = "hidden";
-    mb.map.map.updateSize();
 };
 
 /***
