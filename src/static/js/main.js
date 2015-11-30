@@ -111,19 +111,6 @@ jQuery(document).ready(function() {
             $homeMap.css('height', jQuery(window).height() - (7 * 17)); // 100vh - 11em
         }
     
-        // Overlay
-        /*var $sliderOverlay = jQuery('#slider-overlay');
-        $sliderOverlay.owlCarousel({
-            navigation: true,
-            pagination: true,
-            singleItem: true
-        });
-    
-        $sliderOverlay.find('.next-slide').click(function(evt){
-            evt.preventDefault();
-            $sliderOverlay.data('owlCarousel').next();
-        });*/
-    
         $homeMap.find('.btn-decouvrir').click(function(evt){
             evt.preventDefault();
             evt.stopPropagation();

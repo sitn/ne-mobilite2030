@@ -57,7 +57,7 @@ gulp.task('less', function() {
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-  gulp.watch('src/less/main.less', ['default']);
+  gulp.watch('src/less/*.less', ['less']);
 });
 
 // SVG to PNG
