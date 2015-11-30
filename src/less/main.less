@@ -435,6 +435,9 @@ nav {
                 margin-left: 1em;
             }
         }
+        .active a {
+            color: @red;
+        }
     }
     ul#main-nav {
         position: absolute;
@@ -624,7 +627,11 @@ nav {
         #layerTree-collaper {
             display: none;
         }
-        p {
+        ul {
+            list-style: none;
+            margin: 0; padding: 0;
+        }
+        p, li {
             font-size: .85em;
             margin: 0.5em 0;
             text-align: left;
@@ -703,6 +710,17 @@ nav {
         color: @red;
     }
 }*/
+
+#index-temp {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
+
+    article {
+        margin: 0 auto;
+    }
+}
 
 /* ------------ VISION -------------- */
 
@@ -839,6 +857,9 @@ nav {
             .content {
                 position: relative;
                 .transitionDefault(opacity);
+            }
+            .place {
+                float: right;
             }
             &:hover {
                 .bg {       opacity: 1}
@@ -1277,18 +1298,22 @@ footer {
 .clearfix:before,
 .clearfix:after,
 .row:before,
-.row:after {
+.row:after,
+.calendrier article:before,
+.calendrier article:after {
     content: " ";
     display: table;
 }
 
 .clearfix:after,
-.row:after {
+.row:after,
+.calendrier article:after {
     clear: both;
 }
 
 .clearfix,
-.row {
+.row,
+.calendrier article {
     *zoom: 1;
 }
 
