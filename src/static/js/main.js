@@ -142,12 +142,11 @@ jQuery(document).ready(function() {
         });
     
         // Map
-        mb.map.initMap();
         if(QueryString.feature) {
             $homeMap.removeClass('overlay-visible');
-            setTimeout(function(){
-                mb.map.zoomToFeature(QueryString.feature);
-            }, 500);
+            mb.map.initMap(QueryString.feature);
+        } else {
+            mb.map.initMap('zoom_full_extent');
         }
         
         jQuery('#footer-collapser').click(function(){
