@@ -99,6 +99,9 @@ jQuery(document).ready(function() {
             }
         }
     };
+    
+    /* Init encode email function */
+    initMail();
 
     
     /* ------ Homepage ------  */
@@ -181,3 +184,38 @@ var QueryString = function () {
   } 
     return query_string;
 }();
+
+
+/* Init encode email function */
+function initMail() {
+    jQuery('span.mail').each(function (index, value) {
+        var eml1 = jQuery(this).data('eml-pre');
+        var eml2 = jQuery(this).data('eml-post');
+        var msg = jQuery(this).data('msg');
+        var style = jQuery(this).data('style');
+        var attr = jQuery(this).data('attr');
+        var parent = jQuery(this).parent();
+
+        jQuery(this).remove();
+        parent.append(generateMailLink(eml1, eml2, msg, style, attr));
+    });
+}
+
+function generateMailLink(eml_1, eml_2, msg, style, attr) {
+    style = typeof style !== 'undefined' ? style : '';
+    attr = typeof attr !== 'undefined' ? attr : '';
+    var eml = '';
+    if (eml_1 != '' && eml_2 != '') {
+        eml = eml_1 + "&#64;" + eml_2;
+    }
+
+
+    var noseml = eml.replace("&#64;", " (at) ");
+    var nosmsg = msg.replace("&#64;", " (at) ");
+    eml = eml.replace("&#64;", "@");
+    msg = msg.replace("&#64;", "@");
+
+    var styleinfo = 'class="' + style + '"';
+
+    return "<a " + styleinfo + " href=\"mailto:" + eml + attr + "\">" + msg + "</a>";
+}
