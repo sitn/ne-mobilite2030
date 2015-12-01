@@ -419,8 +419,13 @@ mb.map.setFeatureInfo = function(feature){
     var cout_canton = feature.get('cout_canton');
     var url_piliers = feature.get('url_piliers');
     var html = '';
+
+    if(!libgeo){
+        return;
+    }
+
     if(typeof libgeo === 'undefined' || libgeo === 'null' ){
-        libgeo = '';
+        return;
     }
     html += '<p><b>' + libgeo + '</b></p>';
     if(pilier){
