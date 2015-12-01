@@ -10,6 +10,27 @@
 ***/
 mb.map.initMap = function (zoomFeatureId) {
 
+    // Helping functions
+    function compareCoordinates(coord1, coord2){
+        var
+            lon1 = Math.round(coord1[0]),
+            lon2 = Math.round(coord2[0]),
+            lat1 = Math.round(coord1[1]),
+            lat2 = Math.round(coord2[1]);
+
+        var
+            percent_lon = Math.abs(lon1 / lon2 - 1).toFixed(4),
+            percent_lat = Math.abs(lat1 / lat2 - 1).toFixed(4);
+            percent = (Number(percent_lon) + Number(percent_lat) / 2).toFixed(4);
+
+        return percent;
+    }
+
+    function between(number, min, max){
+        if(number >= min && number <= max) return true;
+        else return false;
+    }
+
     // Define Map Coordinate Reference System
     this.mapProjection = ol.proj.get(mb.params.mapconfig.mapCRS);
     this.mapProjection.setExtent(mb.params.mapconfig.projectionExtent);
@@ -136,8 +157,31 @@ mb.map.initMap = function (zoomFeatureId) {
         })
     ];
 
+    // Hovering layer
     this.featureOverlay = new ol.layer.Vector({
         style: overlayStyle,
+        source: new ol.source.Vector({
+        })
+    });
+
+    var selectStyle = [
+        new ol.style.Style({
+            fill: new ol.style.Fill({ color: [255, 255, 255, 0.5] })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [255, 255, 255, 1], width: 3.5
+            })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [255, 255, 0, 1], width: 2.5
+            })
+        })
+    ];
+    // Feature selection layer
+    this.selectOverlay = new ol.layer.Vector({
+        style: selectStyle,
         source: new ol.source.Vector({
         })
     });
@@ -153,34 +197,14 @@ mb.map.initMap = function (zoomFeatureId) {
         ],
         interactions: interactions,
         target: 'map',
-        layers: [this.baseLayer, this.overlay, this.geojsonLayer, this.featureOverlay],
+        layers: [this.baseLayer, this.overlay, this.geojsonLayer, this.featureOverlay, this.selectOverlay],
         view: new ol.View({
             projection: this.mapProjection,
             resolutions: mb.params.mapconfig.resolutions
         })
     });
 
-    function compareCoordinates(coord1, coord2){
-        var
-            lon1 = Math.round(coord1[0]),
-            lon2 = Math.round(coord2[0]),
-            lat1 = Math.round(coord1[1]),
-            lat2 = Math.round(coord2[1]);
-
-        var
-            percent_lon = Math.abs(lon1 / lon2 - 1).toFixed(4),
-            percent_lat = Math.abs(lat1 / lat2 - 1).toFixed(4);
-            percent = (Number(percent_lon) + Number(percent_lat) / 2).toFixed(4);
-
-        return percent;
-    }
-
-    function between(number, min, max){
-        if(number >= min && number <= max) return true;
-        else return false;
-    }
-
-    mb.map.map.on('pointermove', function(e) {
+    this.map.on('pointermove', function(e) {
 
         if (e.dragging) return;
 
@@ -220,37 +244,48 @@ mb.map.initMap = function (zoomFeatureId) {
         }
     });
 
-    // Single click interaction
-    var selectSingleClick = new ol.interaction.Select({
-        style: mbStyle,
-        filter: function(feature){
+    this.map.on('click', function(e) {
 
-            var layersEl = document.getElementsByName('layerId');
-            var layerList = [];
+        if (e.dragging) return;
 
-            for (var i = 0; i<layersEl.length; i++){
-                if(layersEl[i].checked){
-                    layerList.push(layersEl[i].value.toLowerCase());
+        var pixel = mb.map.map.getEventPixel(e.originalEvent);
+        var hit = mb.map.map.hasFeatureAtPixel(pixel);
+
+        document.getElementById("map").style.cursor = "default";
+
+        if(hit){
+
+            // Set pointer to default
+            document.getElementById("map").style.cursor = "pointer";
+
+            // Get closest feature
+            var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
+            var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+
+            if (closest){
+
+                // Check if feature belongs to selectable/active layer
+
+                var layersEl = document.getElementsByName('layerId');
+                var layerList = [];
+
+                for (var i = 0; i<layersEl.length; i++){
+                    if(layersEl[i].checked){
+                        layerList.push(layersEl[i].value.toLowerCase());
+                    }
                 }
-            }
 
-            var selectLayerName = feature.get("layername").toLowerCase();
-            if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
-                return true;
-            } else {
-                return false;
+                var selectLayerName = closest.get("layername").toLowerCase();
+                if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                    mb.map.selectOverlay.getSource().clear();
+                    mb.map.selectOverlay.getSource().addFeatures([closest]);
+                    document.getElementById("featureInfo").style.visibility = "hidden";
+                    mb.map.setFeatureInfo(closest);
+                }
             }
         }
     });
-    // Get feature info output
-    selectSingleClick.on('select', function(evt){
-        document.getElementById("featureInfo").style.visibility = "hidden";
-        if(evt.selected.length > 0){
-            mb.map.setFeatureInfo(evt.selected[0]);
-        } 
-    });
 
-    this.map.addInteraction(selectSingleClick);
     mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayerUrl, this.geojsonLayer, zoomFeatureId);
     mb.map.setOverlay();
     mb.map.fullScreen();
