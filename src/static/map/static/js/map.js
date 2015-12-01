@@ -377,8 +377,8 @@ mb.map.zoomToFeature = function (filter){
     var zoomExtents = [];
 
     for (var i=0; i < features.length; i++){
-        var idobj = features[i].get('idobj');
-        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
+        var mobilite_id = features[i].get('mobilite_id');
+        if (mobilite_id && mobilite_id.toLowerCase().trim() == filter.toLowerCase().trim()){
             zoomExtents.push(features[i].getGeometry().getExtent());
             mb.map.setFeatureInfo(features[i]); // for test
         }
@@ -417,7 +417,8 @@ mb.map.setFeatureInfo = function(feature){
     var date_realisation = feature.get('date_realisation');
     var cout_total = feature.get('cout_total');
     var cout_canton = feature.get('cout_canton');
-    var url_piliers = feature.get('url_piliers');
+    var is_active_link = feature.get('is_active_link');
+    var mobilite_id = feature.get('mobilite_id');
     var html = '';
 
     if(!libgeo){
@@ -443,8 +444,9 @@ mb.map.setFeatureInfo = function(feature){
     if(cout_canton){
         html += '<p><b>Coût canton: </b>' + cout_canton + '</p>';
     }
-    if(url_piliers){
-        html += '<p><a href="' + url_piliers + '">Plus d\'informations </a></p>';
+    console.log(is_active_link);
+    if(is_active_link == 'on' && mobilite_id){
+        html += '<p><a class="mobilite-link-custom" href="piliers.html#' + mobilite_id + '">Plus d\'informations </a></p>';
     }
     if (html !== ''){
         document.getElementById("featureInfo").innerHTML = html;
