@@ -9,7 +9,7 @@ mb.params = {
         'mapCRS': 'EPSG:21781', // Map's CRS
         'projectionExtent': [433000, 52000, 858000, 316000], // Map's project extent
         'mapDefaultLayer': 'Fonds_carto',
-        'geojsonLayer': 'map/data/geojson/mobilite2030.json',
+        'geojsonLayerUrl': 'map/data/geojson/mobilite2030.json',
         'tileUrl': 'http://tile{1-5}-mobilite2030.ne.ch/tiles/',
         'resolutions': [100, 50, 20, 10, 5],
         'matrixIds': [0,1,2,3,4],

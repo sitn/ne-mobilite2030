@@ -10,6 +10,27 @@
 ***/
 mb.map.initMap = function (zoomFeatureId) {
 
+    // Helping functions
+    function compareCoordinates(coord1, coord2){
+        var
+            lon1 = Math.round(coord1[0]),
+            lon2 = Math.round(coord2[0]),
+            lat1 = Math.round(coord1[1]),
+            lat2 = Math.round(coord2[1]);
+
+        var
+            percent_lon = Math.abs(lon1 / lon2 - 1).toFixed(4),
+            percent_lat = Math.abs(lat1 / lat2 - 1).toFixed(4);
+            percent = (Number(percent_lon) + Number(percent_lat) / 2).toFixed(4);
+
+        return percent;
+    }
+
+    function between(number, min, max){
+        if(number >= min && number <= max) return true;
+        else return false;
+    }
+
     // Define Map Coordinate Reference System
     this.mapProjection = ol.proj.get(mb.params.mapconfig.mapCRS);
     this.mapProjection.setExtent(mb.params.mapconfig.projectionExtent);
@@ -94,43 +115,73 @@ mb.map.initMap = function (zoomFeatureId) {
             })
         })
     });
-
+    
     // Style for feature mouseoverevent
     var gjStyle =  new ol.style.Style({
         stroke: new ol.style.Stroke({
               color: 'rgba(252, 255, 0, 1)',
-              width: 1
+              width: 2
         }),
         image: new ol.style.Circle({
-            radius: 5,
+            radius: 10,
             stroke: new ol.style.Stroke({
-                width: 5,
+                width: 1.5,
                 color: 'rgba(0, 255, 0, 0.8)'
             }),
             fill: new ol.style.Fill({
-                color: 'rgba(0, 255, 0, 0.8)'
+                color: 'rgba(0, 255, 0, 1)'
             })
         })
     });
+    
+    this.geojsonLayer = new ol.layer.Vector({
+        style: gjStyle,
+        opacity: 0,
+        source: new ol.source.Vector({
+        })
+    });
 
-    // Vector layer for feature highlight on mouseover & single click event
-    this.geojsonLayer_point = new ol.layer.Vector({
-        style: gjStyle,
-        opacity: 0,
+    var overlayStyle = [
+        new ol.style.Style({
+            fill: new ol.style.Fill({ color: [255, 255, 255, 0.5] })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [255, 255, 255, 1], width: 3.5
+            })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [0, 153, 255, 1], width: 2.5
+            })
+        })
+    ];
+
+    // Hovering layer
+    this.featureOverlay = new ol.layer.Vector({
+        style: overlayStyle,
         source: new ol.source.Vector({
         })
     });
-    
-    this.geojsonLayer_line = new ol.layer.Vector({
-        style: gjStyle,
-        opacity: 0,
-        source: new ol.source.Vector({
+
+    var selectStyle = [
+        new ol.style.Style({
+            fill: new ol.style.Fill({ color: [255, 255, 255, 0.5] })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [255, 255, 255, 1], width: 3.5
+            })
+        }),
+        new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: [255, 255, 0, 1], width: 2.5
+            })
         })
-    });
-    
-    this.geojsonLayer_poly = new ol.layer.Vector({
-        style: gjStyle,
-        opacity: 0,
+    ];
+    // Feature selection layer
+    this.selectOverlay = new ol.layer.Vector({
+        style: selectStyle,
         source: new ol.source.Vector({
         })
     });
@@ -146,115 +197,96 @@ mb.map.initMap = function (zoomFeatureId) {
         ],
         interactions: interactions,
         target: 'map',
-        layers: [this.baseLayer, this.overlay, this.geojsonLayer_poly, this.geojsonLayer_line, this.geojsonLayer_point],
+        layers: [this.baseLayer, this.overlay, this.geojsonLayer, this.featureOverlay, this.selectOverlay],
         view: new ol.View({
             projection: this.mapProjection,
             resolutions: mb.params.mapconfig.resolutions
         })
     });
-    this.geojsonLayer_poly.setZIndex(1008);
-    this.geojsonLayer_line.setZIndex(1009);
-    this.geojsonLayer_point.setZIndex(1010);
 
-    this.selectFeatCollection = new ol.Collection();
+    this.map.on('pointermove', function(e) {
 
-    // Single click interaction
-    var selectSingleClick = new ol.interaction.Select({
-        style: mbStyle,
-        filter: function(feature){
+        if (e.dragging) return;
 
-            var layersEl = document.getElementsByName('layerId');
-            var layerList = [];
+        var pixel = mb.map.map.getEventPixel(e.originalEvent);
+        var hit = mb.map.map.hasFeatureAtPixel(pixel);
 
-            for (var i = 0; i<layersEl.length; i++){
-                if(layersEl[i].checked){
-                    layerList.push(layersEl[i].value.toLowerCase());
-                }
-            }
+        document.getElementById("map").style.cursor = "default";
 
-            var selectLayerName = feature.get("layername").toLowerCase();
-            if(layerList.indexOf(selectLayerName) >= 0){
-                return true;
-            } else {
-                return false;
-            }
-        }
-    });
-    // Get feature info output
-    selectSingleClick.on('select', function(evt){
-        document.getElementById("featureInfo").style.visibility = "hidden";
-        if(evt.selected.length > 0){
-            selectPointerMove.getFeatures().clear();
-            mb.map.setFeatureInfo(evt.selected[0]);
-        } 
-    });
+        if(hit){
 
-    this.map.addInteraction(selectSingleClick);
-
-    // Hover interaction: highlight features on mouseover if the parent layer is visible
-    var selectPointerMove = new ol.interaction.Select({
-        condition: ol.events.condition.pointerMove,
-        multi: true,
-        layers: [this.geojsonLayer_poly, this.geojsonLayer_line, this.geojsonLayer_point],
-        features: mb.map.selectFeatCollection,
-        filter: function(feature){
-            var fc = mb.map.selectFeatCollection.getArray();
-            var geometryFilter = true; 
-            if(fc && fc.length > 0){
-                var hasPolygon = false;
-                var hasLine = false;
-                var hasPoint = false;
-                for (var i = 0; i < fc.length; i++){
-                    if(fc[i].getGeometry().getType() == 'Polygon'){
-                        hasPolygon = true;
-                    }
-                    if(fc[i].getGeometry().getType() == 'LineString'){
-                        hasLine = true;
-                    }
-                    if(fc[i].getGeometry().getType() == 'Point'){
-                        hasPoint = true;
-                    }
-                }
-                if (hasPoint && hasLine && hasPolygon && feature.getGeometry().getType() == 'Point'){
-                    geometryFilter = true;
-                } else if (!hasPoint && hasLine && hasPolygon && feature.getGeometry().getType() == 'LineString'){
-                    geometryFilter = true;
-                } else if (!hasPoint && !hasLine && hasPolygon && feature.getGeometry().getType() == 'Polygon'){
-                    geometryFilter = true;
-                } else {
-                    geometryFilter = false;
-                }
-            }
-            var layersEl = document.getElementsByName('layerId');
-            var layerList = [];
-
-            for (var j = 0; j<layersEl.length; j++){
-                if(layersEl[j].checked){
-                    layerList.push(layersEl[j].value.toLowerCase());
-                }
-            }
-
-            var selectLayerName = feature.get("layername").toLowerCase();
-            if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0 && geometryFilter){
-                return true;
-            } else {
-                return false;
-            }
-        }
-    });
-
-    selectPointerMove.on('select', function(evt){
-        if(evt.selected.length === 0){
-            document.getElementById("map").style.cursor = "default";
-        } else {
+            // Set pointer to default
             document.getElementById("map").style.cursor = "pointer";
+
+            // Get closest feature
+            var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
+            var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+
+            if (closest){
+
+                // Check if feature belongs to selectable/active layer
+
+                var layersEl = document.getElementsByName('layerId');
+                var layerList = [];
+
+                for (var i = 0; i<layersEl.length; i++){
+                    if(layersEl[i].checked){
+                        layerList.push(layersEl[i].value.toLowerCase());
+                    }
+                }
+
+                var selectLayerName = closest.get("layername").toLowerCase();
+                if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                    mb.map.featureOverlay.getSource().clear();
+                    mb.map.featureOverlay.getSource().addFeatures([closest]);
+                }
+            }
         }
     });
 
-    this.map.addInteraction(selectPointerMove);
+    this.map.on('click', function(e) {
 
-    // Load geojson layer for high responsiveness feature query...
-    mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayer, zoomFeatureId);
+        if (e.dragging) return;
+
+        var pixel = mb.map.map.getEventPixel(e.originalEvent);
+        var hit = mb.map.map.hasFeatureAtPixel(pixel);
+
+        document.getElementById("map").style.cursor = "default";
+
+        if(hit){
+
+            // Set pointer to default
+            document.getElementById("map").style.cursor = "pointer";
+
+            // Get closest feature
+            var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
+            var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+
+            if (closest){
+
+                // Check if feature belongs to selectable/active layer
+
+                var layersEl = document.getElementsByName('layerId');
+                var layerList = [];
+
+                for (var i = 0; i<layersEl.length; i++){
+                    if(layersEl[i].checked){
+                        layerList.push(layersEl[i].value.toLowerCase());
+                    }
+                }
+
+                var selectLayerName = closest.get("layername").toLowerCase();
+                if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                    mb.map.selectOverlay.getSource().clear();
+                    mb.map.selectOverlay.getSource().addFeatures([closest]);
+                    document.getElementById("featureInfo").style.visibility = "hidden";
+                    mb.map.setFeatureInfo(closest);
+                }
+            }
+        }
+    });
+
+    mb.map.loadGeoJson(mb.params.mapconfig.geojsonLayerUrl, this.geojsonLayer, zoomFeatureId);
     mb.map.setOverlay();
     mb.map.fullScreen();
 };
@@ -264,27 +296,7 @@ mb.map.initMap = function (zoomFeatureId) {
 * Method: loadGeoJson
 * Parameters: url [string]
 ***/
-mb.map.loadGeoJson = function(url, zoomFeatureId){
-
-    var mbStyle =  new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(252, 255, 0, 1)'
-        }),
-        stroke: new ol.style.Stroke({
-              color: 'rgba(252, 255, 0, 1)',
-              width: 2
-        }),
-        image: new ol.style.Circle({
-            radius: 5,
-            stroke: new ol.style.Stroke({
-                width: 1.5,
-                color: 'rgba(0, 255, 0, 0.8)'
-            }),
-            fill: new ol.style.Fill({
-                color: 'rgba(0, 255, 0, 0.8)'
-            })
-        })
-    });
+mb.map.loadGeoJson = function(url, layer, zoomFeatureId){
 
     var xmlhttp;
     if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -300,13 +312,7 @@ mb.map.loadGeoJson = function(url, zoomFeatureId){
             var features = gJson.readFeatures(geojson);
             for (var i = 0; i<features.length; i++){
                 var f = features[i];
-                if(f.getGeometry().getType() == 'Point'){
-                    mb.map.geojsonLayer_point.getSource().addFeatures([f]);
-                } else if (f.getGeometry().getType() == 'LineString') {
-                    mb.map.geojsonLayer_line.getSource().addFeatures([f]);
-                } else if (f.getGeometry().getType() == 'Polygon'){
-                    mb.map.geojsonLayer_poly.getSource().addFeatures([f]);
-                } 
+                layer.getSource().addFeatures([f]);
             }
 
             // Fit map extent to window
@@ -361,9 +367,8 @@ mb.map.zoomToFeature = function (filter){
         => mb.map.zoomToFeature('4ca3f933-6c2e-425d-8551-30a77c892523') Électrification La CdF - Morteau
         => mb.map.zoomToFeature('0fd5890b-c641-4d68-b599-096eba3945a6') Littorail Est
     */
-    var features_poly = mb.map.geojsonLayer_poly.getSource().getFeatures();
-    var features_line = mb.map.geojsonLayer_line.getSource().getFeatures();
-    var features_point = mb.map.geojsonLayer_point.getSource().getFeatures();
+    var features= mb.map.geojsonLayer.getSource().getFeatures();
+
     // Only on feature get sele
 
     var zoomExtent;
@@ -371,27 +376,11 @@ mb.map.zoomToFeature = function (filter){
 
     var zoomExtents = [];
 
-    for (var i=0; i < features_poly.length; i++){
-        var idobj = features_poly[i].get('idobj');
-        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
-            zoomExtents.push(features_poly[i].getGeometry().getExtent());
-            mb.map.setFeatureInfo(features_poly[i]); // for test
-        }
-    }
-
-    for (var i=0; i < features_line.length; i++){
-        var idobj = features_line[i].get('idobj');
-        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
-            zoomExtents.push(features_line[i].getGeometry().getExtent());
-            mb.map.setFeatureInfo(features_line[i]); // for test
-        }
-    }
-
-    for (var i=0; i < features_point.length; i++){
-        var idobj = features_point[i].get('idobj');
-        if (idobj && idobj.toLowerCase().trim() == filter.toLowerCase().trim()){
-            zoomExtents.push(features_point[i].getGeometry().getExtent());
-            mb.map.setFeatureInfo(features_point[i]); // for test
+    for (var i=0; i < features.length; i++){
+        var mobilite_id = features[i].get('mobilite_id');
+        if (mobilite_id && mobilite_id.toLowerCase().trim() == filter.toLowerCase().trim()){
+            zoomExtents.push(features[i].getGeometry().getExtent());
+            mb.map.setFeatureInfo(features[i]); // for test
         }
     }
 
@@ -428,10 +417,16 @@ mb.map.setFeatureInfo = function(feature){
     var date_realisation = feature.get('date_realisation');
     var cout_total = feature.get('cout_total');
     var cout_canton = feature.get('cout_canton');
-    var url_piliers = feature.get('url_piliers');
+    var is_active_link = feature.get('is_active_link');
+    var mobilite_id = feature.get('mobilite_id');
     var html = '';
+
+    if(!libgeo){
+        return;
+    }
+
     if(typeof libgeo === 'undefined' || libgeo === 'null' ){
-        libgeo = '';
+        return;
     }
     html += '<p><b>' + libgeo + '</b></p>';
     if(pilier){
@@ -449,8 +444,9 @@ mb.map.setFeatureInfo = function(feature){
     if(cout_canton){
         html += '<p><b>Coût canton: </b>' + cout_canton + '</p>';
     }
-    if(url_piliers){
-        html += '<p><a href="' + url_piliers + '">Plus d\'informations </a></p>';
+    console.log(is_active_link);
+    if(is_active_link == 'on' && mobilite_id){
+        html += '<p><a class="mobilite-link-custom" href="piliers.html#' + mobilite_id + '">Plus d\'informations </a></p>';
     }
     if (html !== ''){
         document.getElementById("featureInfo").innerHTML = html;
