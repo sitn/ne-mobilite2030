@@ -444,7 +444,6 @@ mb.map.setFeatureInfo = function(feature){
     if(cout_canton){
         html += '<p><b>Coût canton: </b>' + cout_canton + '</p>';
     }
-    console.log(is_active_link);
     if(is_active_link == 'on' && mobilite_id){
         html += '<p><a class="mobilite-link-custom" href="piliers.html#' + mobilite_id + '">Plus d\'informations </a></p>';
     }
