@@ -146,7 +146,19 @@ jQuery(document).ready(function() {
         jQuery('#layerTree-collaper').click(function(){
             jQuery('#layerTree').toggleClass('open');
         });
+    }
 
+    
+    /* ------ Piliers ------  */
+
+    //var $homeMap = jQuery('#home-map');
+
+    if(jQuery('#piliers').length > 0 && window.location.hash){
+        var target = jQuery(window.location.hash);
+        
+        target.addClass('open');
+        h = target.offset().top - $('nav').height();    
+        jQuery('html, body').animate({scrollTop:h}, 600);
 
     }
 });
