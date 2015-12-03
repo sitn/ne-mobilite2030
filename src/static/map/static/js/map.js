@@ -324,25 +324,24 @@ mb.map.zoomToFeature = function (filter){
     for (var i=0; i < features.length; i++){
         var mobilite_id = features[i].get('mobilite_id');
         if (mobilite_id && mobilite_id.toLowerCase().trim() == filter.toLowerCase().trim()){
-            zoomExtents.push(features[i].getGeometry().getExtent());
             selectedFeatures.push(features[i]);
-            mb.map.setFeatureInfo(features[i]);
             featureMatched = true;
         }
     }
 
-    if (zoomExtents.length > 1){
-        zoomExtent = zoomExtents[0];
-        for (var j = 1; j < zoomExtents.length; j++){
-            zoomExtent = ol.extent.extend(zoomExtent, features[j].getGeometry().getExtent());
+    if (selectedFeatures.length > 1){
+        zoomExtent = selectedFeatures[0].getGeometry().getExtent();
+        for (var j = 1; j < selectedFeatures.length; j++){
+            zoomExtent = ol.extent.extend(zoomExtent, selectedFeatures[j].getGeometry().getExtent());
         }
     } else {
-        zoomExtent = zoomExtents[0];
+        zoomExtent = selectedFeatures[0].getGeometry().getExtent();
     }
 
     if (featureMatched){
         mb.map.map.getView().fit(zoomExtent, mb.map.map.getSize());
         mb.map.selectOverlay.getSource().addFeatures(selectedFeatures);
+        mb.map.setFeatureInfo(features[0]);
     } else {
         var vExt = mb.params.mapconfig.mapExtent;
         adaptedExtent = [vExt[0] + fe, vExt[1] + fe, vExt[2] - fe, vExt[3] - fe];
