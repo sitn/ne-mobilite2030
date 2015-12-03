@@ -216,6 +216,9 @@ mb.map.initMap = function (zoomFeatureId) {
                     mb.map.setFeatureInfo(closest);
                 }
             }
+        } else {
+            document.getElementById("featureInfo").style.visibility = "hidden";
+            mb.map.selectOverlay.getSource().clear();
         }
     });
 
