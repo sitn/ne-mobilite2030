@@ -117,7 +117,7 @@ jQuery(document).ready(function() {
         $homeMap.find('.btn-decouvrir').click(function(evt){
             evt.preventDefault();
             evt.stopPropagation();
-            $homeMap.removeClass('overlay-visible');
+            $homeMap.toggleClass('overlay-visible');
         });
     
         $homeMap.find('.overlay').click(function(evt){
