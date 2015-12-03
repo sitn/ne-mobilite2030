@@ -125,6 +125,7 @@ mb.map.initMap = function (zoomFeatureId) {
     // Feature selection layer
     this.selectOverlay = new ol.layer.Vector({
         style: selectStyle,
+        opacity: 0.6,
         source: new ol.source.Vector({
         })
     });
