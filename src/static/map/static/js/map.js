@@ -147,6 +147,8 @@ mb.map.initMap = function (zoomFeatureId) {
 
     this.map.on('pointermove', function(e) {
 
+        mb.map.featureOverlay.getSource().clear();
+
         if (e.dragging) return;
 
         var pixel = mb.map.map.getEventPixel(e.originalEvent);
@@ -173,7 +175,6 @@ mb.map.initMap = function (zoomFeatureId) {
                 var selectLayerName = closest.get("layername").toLowerCase();
                 if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
                     document.getElementById("map").style.cursor = "pointer";
-                    mb.map.featureOverlay.getSource().clear();
                     mb.map.featureOverlay.getSource().addFeatures([closest]);
                 }
             }
