@@ -341,7 +341,7 @@ mb.map.zoomToFeature = function (filter){
     if (featureMatched){
         mb.map.map.getView().fit(zoomExtent, mb.map.map.getSize());
         mb.map.selectOverlay.getSource().addFeatures(selectedFeatures);
-        mb.map.setFeatureInfo(features[0]);
+        mb.map.setFeatureInfo(selectedFeatures[0]);
     } else {
         var vExt = mb.params.mapconfig.mapExtent;
         adaptedExtent = [vExt[0] + fe, vExt[1] + fe, vExt[2] - fe, vExt[3] - fe];
