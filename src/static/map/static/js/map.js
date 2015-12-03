@@ -12,26 +12,6 @@
 ***/
 mb.map.initMap = function (zoomFeatureId) {
 
-    function compareCoordinates(coord1, coord2){
-        var
-            lon1 = Math.round(coord1[0]),
-            lon2 = Math.round(coord2[0]),
-            lat1 = Math.round(coord1[1]),
-            lat2 = Math.round(coord2[1]);
-
-        var
-            percent_lon = Math.abs(lon1 / lon2 - 1).toFixed(4),
-            percent_lat = Math.abs(lat1 / lat2 - 1).toFixed(4);
-            percent = (Number(percent_lon) + Number(percent_lat) / 2).toFixed(4);
-
-        return percent;
-    }
-
-    function between(number, min, max){
-        if(number >= min && number <= max) return true;
-        else return false;
-    }
-
     this.mapProjection = ol.proj.get(mb.params.mapconfig.mapCRS);
     this.mapProjection.setExtent(mb.params.mapconfig.projectionExtent);
     this.extent = mb.params.mapconfig.mapExtent;
@@ -176,7 +156,6 @@ mb.map.initMap = function (zoomFeatureId) {
 
         if(hit){
 
-            document.getElementById("map").style.cursor = "pointer";
             var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
             var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
 
@@ -193,6 +172,7 @@ mb.map.initMap = function (zoomFeatureId) {
 
                 var selectLayerName = closest.get("layername").toLowerCase();
                 if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                    document.getElementById("map").style.cursor = "pointer";
                     mb.map.featureOverlay.getSource().clear();
                     mb.map.featureOverlay.getSource().addFeatures([closest]);
                 }
@@ -289,7 +269,7 @@ mb.map.loadGeoJson = function(url, layer, zoomFeatureId){
 mb.map.setOverlay = function (){
 
     var layers = this.overlay.getLayers();
-    layers.forEach(function(layer, index, array){
+    layers.forEach(function(layer){
 
         layer.setVisible(false);
         var layersEl = document.getElementsByName('layerId');
@@ -315,7 +295,6 @@ mb.map.zoomToFeature = function (filter){
     var features = mb.map.geojsonLayer.getSource().getFeatures();
     var zoomExtent;
     mb.map.selectOverlay.getSource().clear();
-    var zoomExtents = [];
     var selectedFeatures = [];
     var featureMatched = false;
     var adaptedExtent;
