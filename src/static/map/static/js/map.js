@@ -6,11 +6,12 @@
 /*** 
 * Initialize the OL3 2D map 
 * Method: initMapView
-* Parameters: none
+* Parameters: zoomFeatureId [String]
+* Use a valid zoomFeatureId to open map on specific entity
+* Use "zoom_full_extent" to open map on complete extent
 ***/
 mb.map.initMap = function (zoomFeatureId) {
 
-    // Helping functions
     function compareCoordinates(coord1, coord2){
         var
             lon1 = Math.round(coord1[0]),
@@ -31,15 +32,11 @@ mb.map.initMap = function (zoomFeatureId) {
         else return false;
     }
 
-    // Define Map Coordinate Reference System
     this.mapProjection = ol.proj.get(mb.params.mapconfig.mapCRS);
     this.mapProjection.setExtent(mb.params.mapconfig.projectionExtent);
-
-    // Calculate the map center
     this.extent = mb.params.mapconfig.mapExtent;
     this.mapCenter = [(this.extent[0] + this.extent[2]) / 2, (this.extent[1] + this.extent[3]) / 2];
 
-    // WMTS configuration
     var wmtsSource = function(layer) {
         var tileGrid = new ol.tilegrid.WMTS({
             resolutions: mb.params.mapconfig.resolutions,
@@ -56,7 +53,6 @@ mb.map.initMap = function (zoomFeatureId) {
         }));
     };
 
-    // Base layer
     this.baseLayer = new ol.layer.Tile({
         source: wmtsSource('Fonds_carto')
     });
@@ -94,48 +90,14 @@ mb.map.initMap = function (zoomFeatureId) {
             })
         ]
     });
-
-    // Zoom control
-    var zoomControl = new ol.control.Zoom();
-
-    // Style for feature selection highlight
-    var mbStyle =  new ol.style.Style({
-        stroke: new ol.style.Stroke({
-              color: 'rgba(252, 255, 0, 1)',
-              width: 2
-        }),
-        image: new ol.style.Circle({
-            radius: 5,
-            stroke: new ol.style.Stroke({
-                width: 1.5,
-                color: 'rgba(0, 255, 0, 0.8)'
-            }),
-            fill: new ol.style.Fill({
-                color: 'rgba(0, 255, 0, 0.8)'
-            })
-        })
-    });
-    
-    // Style for feature mouseoverevent
-    var gjStyle =  new ol.style.Style({
-        stroke: new ol.style.Stroke({
-              color: 'rgba(252, 255, 0, 1)',
-              width: 2
-        }),
-        image: new ol.style.Circle({
-            radius: 10,
-            stroke: new ol.style.Stroke({
-                width: 1.5,
-                color: 'rgba(0, 255, 0, 0.8)'
-            }),
-            fill: new ol.style.Fill({
-                color: 'rgba(0, 255, 0, 1)'
-            })
-        })
-    });
     
     this.geojsonLayer = new ol.layer.Vector({
-        style: gjStyle,
+        style: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                  color: 'rgba(252, 255, 0, 1)',
+                  width: 2
+            })
+        }),
         opacity: 0,
         source: new ol.source.Vector({
         })
@@ -179,6 +141,7 @@ mb.map.initMap = function (zoomFeatureId) {
             })
         })
     ];
+
     // Feature selection layer
     this.selectOverlay = new ol.layer.Vector({
         style: selectStyle,
@@ -186,14 +149,12 @@ mb.map.initMap = function (zoomFeatureId) {
         })
     });
 
-    // Disable map rotation
     var interactions = ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false});
 
-    // Map
     this.map = new ol.Map({
         controls: [
             new ol.control.ScaleLine(),
-            zoomControl
+            new ol.control.Zoom()
         ],
         interactions: interactions,
         target: 'map',
@@ -215,16 +176,11 @@ mb.map.initMap = function (zoomFeatureId) {
 
         if(hit){
 
-            // Set pointer to default
             document.getElementById("map").style.cursor = "pointer";
-
-            // Get closest feature
             var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
             var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
 
             if (closest){
-
-                // Check if feature belongs to selectable/active layer
 
                 var layersEl = document.getElementsByName('layerId');
                 var layerList = [];
@@ -255,16 +211,11 @@ mb.map.initMap = function (zoomFeatureId) {
 
         if(hit){
 
-            // Set pointer to default
-            document.getElementById("map").style.cursor = "pointer";
-
             // Get closest feature
             var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
             var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
 
             if (closest){
-
-                // Check if feature belongs to selectable/active layer
 
                 var layersEl = document.getElementsByName('layerId');
                 var layerList = [];
@@ -299,9 +250,9 @@ mb.map.initMap = function (zoomFeatureId) {
 mb.map.loadGeoJson = function(url, layer, zoomFeatureId){
 
     var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+    if (window.XMLHttpRequest){ // IE7+, Firefox, Chrome, Opera, Safari
         xmlhttp = new XMLHttpRequest();
-    } else {// code for IE6, IE5
+    } else {// IE6, IE5
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
@@ -361,25 +312,23 @@ mb.map.setOverlay = function (){
 ***/
 mb.map.zoomToFeature = function (filter){
 
-    var features= mb.map.geojsonLayer.getSource().getFeatures();
-
-    // Only on feature get sele
-
+    var features = mb.map.geojsonLayer.getSource().getFeatures();
     var zoomExtent;
-    var featureCollection = new ol.Collection();
-
+    mb.map.selectOverlay.getSource().clear();
     var zoomExtents = [];
+    var selectedFeatures = [];
+    var featureMatched = false;
+    var adaptedExtent;
+    var fe = mb.params.mapconfig.extentCorrection;
 
     for (var i=0; i < features.length; i++){
         var mobilite_id = features[i].get('mobilite_id');
         if (mobilite_id && mobilite_id.toLowerCase().trim() == filter.toLowerCase().trim()){
             zoomExtents.push(features[i].getGeometry().getExtent());
-            mb.map.setFeatureInfo(features[i]); // for test
+            selectedFeatures.push(features[i]);
+            mb.map.setFeatureInfo(features[i]);
+            featureMatched = true;
         }
-    }
-
-    if (zoomExtents.length === 0){
-        return;
     }
 
     if (zoomExtents.length > 1){
@@ -391,10 +340,14 @@ mb.map.zoomToFeature = function (filter){
         zoomExtent = zoomExtents[0];
     }
 
-    if (typeof zoomExtent !== 'null'){
+    if (featureMatched){
         mb.map.map.getView().fit(zoomExtent, mb.map.map.getSize());
+        mb.map.selectOverlay.getSource().addFeatures(selectedFeatures);
+    } else {
+        var vExt = mb.params.mapconfig.mapExtent;
+        adaptedExtent = [vExt[0] + fe, vExt[1] + fe, vExt[2] - fe, vExt[3] - fe];
+        mb.map.map.getView().fit(adaptedExtent, mb.map.map.getSize());
     }
-
 };
 
 /***
@@ -461,4 +414,3 @@ mb.map.fullScreen = function(){
     document.getElementById("map").style.border = "none";
     mb.map.map.updateSize();
 };
-
