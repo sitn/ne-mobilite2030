@@ -347,7 +347,7 @@ section {
         }
 
         &.open + .collapsible {
-            max-height: 25em;
+            max-height: 30em;
             padding-bottom: 1em;
         }
         &.open {
@@ -725,22 +725,6 @@ nav {
     }
 }
 
-/*#un-canton {
-    font-size: 1.2em;
-
-    .col_7 img {
-        max-width: 127%;
-    }
-
-    h1 {
-        font-family: @substance;
-        font-style: normal;
-        margin-top: 5.5em;
-        line-height: 1;
-        color: @red;
-    }
-}*/
-
 #index-temp {
     display: flex;
     align-items: center;
@@ -786,7 +770,10 @@ nav {
 
 #enjeux {
     background-image: url(../img/bg-enjeux.jpg);
-   }
+    }
+    #economie {
+        background-image: url(../img/bg-economie.jpg);
+    }
 
 /* ------------ FINANCEMENTS -------------- */
 
@@ -798,36 +785,43 @@ nav {
     }
     #financements-table {
         width: 100%;
-        min-width: 800px;
+        min-width: 600px;
         text-align: right;
         background-color: #fff;
 
         th {
-            padding: 0 0.5em 0.5em;
+            padding: 0.75em 0.5em;
             background-color: #d7dce1;
             font-weight: normal;
-            line-height: 1.2;
+            border-bottom: 1px solid #c9cfd6;
 
             &.total {
                 background-color: #cad1d9;
             }
-            &:first-child {
+            /*&:first-child {
                 text-align: left !important;
                 padding-left: 1em;
             }
             }
             tr:first-child th {
                 padding-top: 1em;
-                text-align: center;
-            }
+                //text-align: center;
+            }*/
+        }
         td {
             border-bottom: 1px solid #c9cfd6;
             padding: 0.5em;
             &:first-child {
                 text-align: left;
                 padding-left: 1em;
+                &.center {
+                    background-color: #eef0f2;
+                    border-bottom: 0;
+                    font-size: 0.875em;
+                    text-align: center;
+                }
             }
-            }
+        }
         .strong {
             font-weight: normal;
         }
@@ -835,11 +829,11 @@ nav {
             background-color: #eef0f2;
         }
     }
-    .notes {
+    /*.notes {
         list-style: none;
         padding: 0;
         font-size: 0.875em;
-    }
+    }*/
     #federal {
         background-image: url(../img/bg-financement-federal.jpg);
         background-position: right center;
@@ -847,10 +841,20 @@ nav {
     .financements-2 {
         position: relative;
         overflow: hidden;
-        img {
+        figure {
             position: absolute;
             bottom: 0%; left: 2%;
             max-width: 50%;
+            margin: 0;
+
+            figcaption {
+                position: absolute;
+                left: 65%; bottom: 3em;
+                min-width: 16em;
+                color: @red;
+                font-family: @nexa;
+                font-style: italic;
+            }
         }
     }
 
@@ -858,6 +862,25 @@ nav {
 
 #votation {
     background-image: url(../img/bg-votation.jpg);
+    }
+    ol {
+        list-style: none;
+
+        li {
+            margin: 1em 0;
+        }
+        sup {
+            display: inline-block;
+            width: 1.5em; height: 1.5em;
+            margin: 0 1em 0 -2.5em;
+            border-radius: 1em;
+            color: #fff;
+            font-size: 65%;
+            font-weight: bold;
+            line-height: 1.5;
+            text-align: center;
+            background-color: @red;
+        }
     }
     .calendrier {
         margin: 1em 0 3em;
@@ -869,13 +892,6 @@ nav {
             position: relative;
             background-color: #000;
             
-            date {
-                float: left;
-                border-right: 1px solid;
-                font-weight: normal;
-                margin-right: 2em;
-                width: 10em;
-            }
             .bg {
                 position: absolute;
                 width: 100%; height: 100%;
@@ -888,13 +904,29 @@ nav {
                 position: relative;
                 .transitionDefault(opacity);
             }
+            date {
+                float: left;
+                font-weight: normal;
+                width: 10em;
+            }
+            p {
+                border-left: 1px solid;
+                margin: 0 0 0 11em;
+                padding: 0 1em;
+            }
             .place {
                 float: right;
+                width: 6em;
+
+                & + p {
+                    border-right: 1px solid;
+                    margin-right: 7em;
+                }
             }
-            &:hover {
+            /*&:hover {
                 .bg {       opacity: 1}
                 .content {  opacity: 0}
-            }
+            }*/
         }
     }
 
@@ -1029,6 +1061,11 @@ footer {
         ul {
             display: none;
         }
+    }
+
+    .financements-2 figure figcaption {
+        left: 60%;
+        min-width: 0;
     }
 
     footer #chiffres {
@@ -1224,8 +1261,11 @@ footer {
     }
     .financements-2 {
         padding-bottom: 33em;
-        img {
+        figure {
             max-width: 96%;
+            figcaption {
+                bottom: 1.5em;
+            }
         }
     }
     /* Votation */
@@ -1237,13 +1277,13 @@ footer {
         .bg {
              display: none;
         }
-        date {
-            border: 0;
-            float: none;
+        date, p, .place {
+            border: 0 none !important;
             display: block;
-        }
-        &:hover .content {
-            opacity: 1;
+            float: none;
+            margin: 0.5em 0 !important;
+            padding: 0;
+            width: auto;
         }
     }
 
