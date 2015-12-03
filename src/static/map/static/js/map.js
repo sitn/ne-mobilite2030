@@ -361,12 +361,6 @@ mb.map.setOverlay = function (){
 ***/
 mb.map.zoomToFeature = function (filter){
 
-    /* filter possible values: 
-        => mb.map.zoomToFeature('7c5eab57-43c8-4574-bcc2-4c191a7074e0') Ligne directe Neuchâtel - la Chaux-de-Fonds
-        => mb.map.zoomToFeature('a37f2254-6b99-4c3c-a80d-057d7f3c9f4c') Bôle - Corcelle
-        => mb.map.zoomToFeature('4ca3f933-6c2e-425d-8551-30a77c892523') Électrification La CdF - Morteau
-        => mb.map.zoomToFeature('0fd5890b-c641-4d68-b599-096eba3945a6') Littorail Est
-    */
     var features= mb.map.geojsonLayer.getSource().getFeatures();
 
     // Only on feature get sele
