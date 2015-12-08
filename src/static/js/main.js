@@ -108,11 +108,11 @@ jQuery(document).ready(function() {
 
     var $homeMap = jQuery('#home-map');
 
-    if($homeMap.length > 0){
+    if($homeMap.length > 0 && !jQuery('html').hasClass('lt-ie9')){
         // Fallback CSS VH
-        if(!Modernizr.cssvhunit) {
-            $homeMap.css('height', jQuery(window).height() - (7 * 17)); // 100vh - 11em
-        }
+        //if(!Modernizr.cssvhunit || !Modernizr.csscalc) {
+        $homeMap.css('height', jQuery(window).height() - jQuery('nav').height());
+        //}
     
         $homeMap.find('.btn-decouvrir').click(function(evt){
             evt.preventDefault();
@@ -140,11 +140,15 @@ jQuery(document).ready(function() {
         }
         
         jQuery('#footer-collapser').click(function(){
-            jQuery('footer').find('>.content').toggleClass('open');
+            jQuery('footer').toggleClass('open');
         });
         
-        jQuery('#layerTree-collaper').click(function(){
+        jQuery('#layerTree-collapser').click(function(){
             jQuery('#layerTree').toggleClass('open');
+        });
+        
+        jQuery('#featureInfo-collapser').click(function(){
+            jQuery('#featureInfo').css('visibility', 'hidden');
         });
     }
 

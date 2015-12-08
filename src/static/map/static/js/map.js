@@ -378,7 +378,7 @@ mb.map.setFeatureInfo = function(feature){
         html += '<p><a class="mobilite-link-custom" href="piliers.html#' + mobilite_id + '">Plus d\'informations </a></p>';
     }
     if (html !== ''){
-        document.getElementById("featureInfo").innerHTML = html;
+        document.getElementById("featureInfoContent").innerHTML = html;
         document.getElementById("featureInfo").style.visibility = "visible";
     }
 };

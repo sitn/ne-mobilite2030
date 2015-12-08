@@ -1,6 +1,7 @@
 ---
 title: Tous reliés!
 tags: general
+nav-home: home
 menu-index: active
 ---
 
@@ -13,14 +14,15 @@ menu-index: active
 				<p>Un réseau de transports performant permettra à notre canton de se rassembler, d'optimiser ses structures et de se réformer de l'intérieur pour rayonner vers l'extérieur. Le gouvernement en est convaincu, au même titre que les acteurs socio-économiques neuchâtelois.</p>
 				<p>La concrétisation de la vision "Un canton, un espace" doit être le moteur de nos ambitions communes. En appuyant le projet réaliste et financièrement cohérent soumis à son vote en février prochain, la population neuchâteloise s'affirmera et enverra un message fort à Berne sur sa volonté de soutenir le développement de son canton.</p>
 				<p><em>Le Conseil d'Etat</em></p>
+                        <p><a href="vision.html" id="btn-vision" class="btn">La vision</a></p>
 			</div>
-			<a href="#" id="btn-decouvrir" class="btn-decouvrir"><strong>Découvrir</strong><br />la carte interactive</a>
+                  <a href="#" id="btn-decouvrir" class="btn-decouvrir"><strong>Découvrir</strong><br />la carte interactive</a>
 		</div>
 		<img src="img/un-canton.svg" class="img-reseau" />
 	</div>
 	<div id="map">
+            <a href="#" id="layerTree-collapser">Légende</a>
 		<div id="layerTree">
-			<a href="#" id="layerTree-collaper"></a>
 			<ul>
             	<li><img src="map/static/images/nomenclature.png" />
             		<input type="checkbox" name="layerId" id="nomenclature_localite" value="nomenclature_localite" onchange="mb.map.setOverlay();" checked>
@@ -33,9 +35,11 @@ menu-index: active
             	<li><img src="map/static/images/projets_rer.png" />
             		<input type="checkbox" name="layerId" id="Projet_RER" value="Projet_RER" onchange="mb.map.setOverlay();" checked >
             		<label for="Projet_RER">Projet RER 2030<br />
-            			<small>cadence heure de pointe<br />
-            			<i class="cadence-60"></i> 60 min<br />
-            			<i class="cadence-30"></i> 30 min<br />
+                              <i class="nouveaux-troncons"></i> nouveaux tronçons<br />
+                              <i class="nouvelles-gares"></i> nouvelles gares<br />
+                              <em>cadence heure de pointe</em><br />
+                              <i class="cadence-60"></i> 60 min<br />
+                              <i class="cadence-30"></i> 30 min<br />
             			<i class="cadence-15"></i> 15 min<br /></small>
             		</label>
             	</li>
@@ -66,16 +70,6 @@ menu-index: active
             	</li>
         	</ul>
         </div>
-        <div id="featureInfo"></div>
+        <div id="featureInfo"><a href="#" id="featureInfo-collapser"></a><div id="featureInfoContent"></div></div>
     </div>
 </article>
-<!-- <article id="un-canton">
-	<div class="wrapper clearfix">
-		<div class="col_7"><img src="img/un-canton.svg" class="img-responsive" /></div>
-		<div class="col_5">
-			<h1>nous sommes un.<br />un canton,<br />un espace</h1>
-            <p>Affirmons notre contribution à la prospérité de la Suisse. Positionnons le second canton exportateur du pays sur la carte. Dessinons sa stratégie de mobilité. <strong>mobilisons-nous!</strong></p>
-			<p><a href="vision.html" class="btn">Notre vision</a></p>
-		</div>
-	</div>
-</article>	 -->
