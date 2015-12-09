@@ -1,9 +1,10 @@
 
-// Project name - JS //
+// NE MOBILITE 2030 - JS //
+
+var largeScreen = 950,
+    isLargeScreen = jQuery(window).width() > largeScreen;
 
 jQuery(document).ready(function() {
-
-    var isLargeScreen = jQuery(window).width() > 900;
 
     /* Remplace les SVG par des PNG */
     if (!Modernizr.svg) {
@@ -29,11 +30,23 @@ jQuery(document).ready(function() {
         var jPM = jQuery.jPanelMenu({
             menu: '#menus',
             trigger: '#nav-collapser',
-            direction: 'right'
+            direction: 'right',
+            excludedPanelContent: 'nav'
         });
         jPM.on();
         jQuery('#jPanelMenu-menu').find('li.active a').click(function(evt){
+            evt.preventDefault();
             jPM.close();
+
+            // Cible à atteindre
+            var target = $('#' + $(this).attr('href').split('#')[1]);
+            if(target.length > 0){
+                h = target.offset().top - 75;
+                
+                $('html, body').animate({scrollTop:h}, 600);                
+                window.location.hash = $(this).attr('href');
+            }
+            $(this).blur();
         })
     }
 
@@ -109,10 +122,12 @@ jQuery(document).ready(function() {
     var $homeMap = jQuery('#home-map');
 
     if($homeMap.length > 0 && !jQuery('html').hasClass('lt-ie9')){
-        // Fallback CSS VH
-        //if(!Modernizr.cssvhunit || !Modernizr.csscalc) {
-        $homeMap.css('height', jQuery(window).height() - jQuery('nav').height());
-        //}
+
+        var navH = (isLargeScreen) ? 130 : 115;
+        jQuery('nav').height(navH);
+        $homeMap.css({
+            height: jQuery(window).height() - navH
+        });
     
         $homeMap.find('.btn-decouvrir').click(function(evt){
             evt.preventDefault();
@@ -130,6 +145,12 @@ jQuery(document).ready(function() {
                 $homeMap.removeClass('overlay-visible');
             }
         });
+
+        $homeMap.click(function(evt){
+            if(jQuery(evt.target).is('canvas')){
+                jQuery('#layerTree').removeClass('open');
+            }
+        })
     
         // Map
         if(QueryString.feature) {
@@ -155,8 +176,6 @@ jQuery(document).ready(function() {
     
     /* ------ Piliers ------  */
 
-    //var $homeMap = jQuery('#home-map');
-
     if(jQuery('#piliers').length > 0 && window.location.hash){
         var target = jQuery(window.location.hash);
         
@@ -166,6 +185,43 @@ jQuery(document).ready(function() {
 
     }
 });
+
+
+/* Gestion du scroll */
+jQuery(window).scroll(function () {
+
+    if (!isLargeScreen) {
+
+        /* Gestion de l'affichage du du menu au scroll */
+        if (jQuery(this).scrollTop() > 1) {
+            jQuery('nav').not('.home').addClass("smaller");
+        }
+        else {
+            jQuery('nav').removeClass("smaller");
+        }
+    }
+});
+
+/* ------------- Recharge la page si le format change ------------- */
+
+var w = jQuery(window).width();
+
+window.onresize = function () {
+    var newWidth = jQuery(window).width()
+    if ((w < largeScreen && newWidth > largeScreen) || (w > largeScreen && newWidth < largeScreen)) {
+        refresh();
+    };
+};
+
+function refresh() {
+    if (window.RT)
+        clearTimeout(window.RT);
+    window.RT = setTimeout(function () {
+        this.location.reload(false); /* false to get page from cache */
+    }, 100);
+}
+
+/* ------------- switchActiveClass ------------- */
 
 function switchActiveClass(group, active, className) {
     if(!className) className = 'active';
@@ -177,6 +233,8 @@ function switchActiveClass(group, active, className) {
         active.addClass(className);
     }
 }
+
+/* ------------- Home map QueryString ------------- */
 
 var QueryString = function () {
   // This function is anonymous, is executed immediately and 
@@ -202,7 +260,7 @@ var QueryString = function () {
 }();
 
 
-/* Init encode email function */
+/* ------------- Init encode email function ------------- */
 function initMail() {
     jQuery('span.mail').each(function (index, value) {
         var eml1 = jQuery(this).data('eml-pre');
@@ -224,7 +282,6 @@ function generateMailLink(eml_1, eml_2, msg, style, attr) {
     if (eml_1 != '' && eml_2 != '') {
         eml = eml_1 + "&#64;" + eml_2;
     }
-
 
     var noseml = eml.replace("&#64;", " (at) ");
     var nosmsg = msg.replace("&#64;", " (at) ");
