@@ -76,6 +76,9 @@ mb.map.initMap = function (zoomFeatureId) {
             stroke: new ol.style.Stroke({
                   color: 'rgba(252, 255, 0, 1)',
                   width: 2
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(252, 255, 0, 1)'
             })
         }),
         opacity: 0,
