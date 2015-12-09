@@ -157,30 +157,40 @@ mb.map.initMap = function (zoomFeatureId) {
 
         var pixel = mb.map.map.getEventPixel(e.originalEvent);
         var hit = mb.map.map.hasFeatureAtPixel(pixel);
-
         document.getElementById("map").style.cursor = "default";
 
         if(hit){
 
             var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
-            var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+            var closest = mb.map.geojsonLayer.getSource().getFeaturesAtCoordinate(pointer_coord);
 
-            if (closest){
+            if(!closest){
+                return;
+            }
 
-                var layersEl = document.getElementsByName('layerId');
-                var layerList = [];
+            var layerList = [];
+            var layersEl = document.getElementsByName('layerId');
 
-                for (var i = 0; i<layersEl.length; i++){
-                    if(layersEl[i].checked){
-                        layerList.push(layersEl[i].value.toLowerCase());
-                    }
+            for (var i = 0; i<layersEl.length; i++){
+                if(layersEl[i].checked){
+                    layerList.push(layersEl[i].value.toLowerCase());
                 }
+            }
 
-                var selectLayerName = closest.get("layername").toLowerCase();
-                if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
-                    document.getElementById("map").style.cursor = "pointer";
-                    mb.map.featureOverlay.getSource().addFeatures([closest]);
-                }
+            if (closest.length == 1){
+                closest = closest[0];
+            } else {
+                closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+            }
+
+            if(!closest){
+                return;
+            }
+
+            var selectLayerName = closest.get("layername").toLowerCase();
+            if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                document.getElementById("map").style.cursor = "pointer";
+                mb.map.featureOverlay.getSource().addFeatures([closest]);
             }
         }
     });
@@ -191,34 +201,45 @@ mb.map.initMap = function (zoomFeatureId) {
 
         var pixel = mb.map.map.getEventPixel(e.originalEvent);
         var hit = mb.map.map.hasFeatureAtPixel(pixel);
-
         document.getElementById("map").style.cursor = "default";
 
         if(hit){
 
             // Get closest feature
             var pointer_coord = mb.map.map.getEventCoordinate(e.originalEvent);
-            var closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+            var closest = mb.map.geojsonLayer.getSource().getFeaturesAtCoordinate(pointer_coord);
 
-            if (closest){
+            if(!closest){
+                return;
+            }
 
-                var layersEl = document.getElementsByName('layerId');
-                var layerList = [];
+            var layerList = [];
+            var layersEl = document.getElementsByName('layerId');
 
-                for (var i = 0; i<layersEl.length; i++){
-                    if(layersEl[i].checked){
-                        layerList.push(layersEl[i].value.toLowerCase());
-                    }
-                }
-
-                var selectLayerName = closest.get("layername").toLowerCase();
-                if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
-                    mb.map.selectOverlay.getSource().clear();
-                    mb.map.selectOverlay.getSource().addFeatures([closest]);
-                    document.getElementById("featureInfo").style.visibility = "hidden";
-                    mb.map.setFeatureInfo(closest);
+            for (var i = 0; i<layersEl.length; i++){
+                if(layersEl[i].checked){
+                    layerList.push(layersEl[i].value.toLowerCase());
                 }
             }
+
+            if (closest.length == 1){
+                closest = closest[0];
+            } else {
+                closest = mb.map.geojsonLayer.getSource().getClosestFeatureToCoordinate(pointer_coord);
+            }
+
+            if(!closest){
+                return;
+            }
+
+            var selectLayerName = closest.get("layername").toLowerCase();
+            if(layerList.indexOf(selectLayerName) >= 0 && mb.params.mapconfig.selectableLayers.indexOf(selectLayerName) >= 0){
+                mb.map.selectOverlay.getSource().clear();
+                mb.map.selectOverlay.getSource().addFeatures([closest]);
+                document.getElementById("featureInfo").style.visibility = "hidden";
+                mb.map.setFeatureInfo(closest);
+            }
+
         } else {
             document.getElementById("featureInfo").style.visibility = "hidden";
             mb.map.selectOverlay.getSource().clear();
