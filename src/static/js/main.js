@@ -136,13 +136,20 @@ jQuery(document).ready(function() {
         });
     
         $homeMap.find('.overlay').click(function(evt){
-            evt.preventDefault();
-            var posX = evt.offsetX / jQuery(this).width(),
-                posY = evt.offsetY / jQuery(this).height();
 
-            // Si clic dans la moitié inférieure droite 
-            if (posX + posY > 1) {
-                $homeMap.removeClass('overlay-visible');
+            if(evt.target.id === 'supporting_committee_link') {
+                return;
+            } else {
+
+                evt.preventDefault();
+
+                var posX = evt.offsetX / jQuery(this).width(),
+                    posY = evt.offsetY / jQuery(this).height();
+
+                // Si clic dans la moitié inférieure droite 
+                if (posX + posY > 1) {
+                    $homeMap.removeClass('overlay-visible');
+                }
             }
         });
 
