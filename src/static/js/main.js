@@ -130,14 +130,17 @@ jQuery(document).ready(function() {
         });
     
         $homeMap.find('.btn-decouvrir').click(function(evt){
-            evt.preventDefault();
-            evt.stopPropagation();
-            $homeMap.toggleClass('overlay-visible');
+            if(evt.target.id === 'supporting_committee_link') {
+                return;
+            } else {
+                evt.preventDefault();
+                evt.stopPropagation();
+                $homeMap.toggleClass('overlay-visible');
+            }
         });
     
         $homeMap.find('.overlay').click(function(evt){
-
-            if(evt.target.id === 'supporting_committee_link') {
+            if(evt.target.id === 'agenda_link' || evt.target.id === 'supporting_committee_link') {
                 return;
             } else {
 
