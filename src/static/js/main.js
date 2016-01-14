@@ -140,7 +140,6 @@ jQuery(document).ready(function() {
         });
     
         $homeMap.find('.overlay').click(function(evt){
-            console.log(evt.target.id)
             if(evt.target.id === 'agenda_link' || evt.target.id === 'supporting_committee_link') {
                 return;
             } else {
