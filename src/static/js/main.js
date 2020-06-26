@@ -140,7 +140,7 @@ jQuery(document).ready(function() {
         });
     
         $homeMap.find('.overlay').click(function(evt){
-            if(evt.target.id === 'agenda_link' || evt.target.id === 'supporting_committee_link' || evt.target.id === 'facebook_link1' || evt.target.id === 'facebook_link2') {
+            if(evt.target.id === 'doc_link' || evt.target.id === 'agenda_link' || evt.target.id === 'supporting_committee_link' || evt.target.id === 'facebook_link1' || evt.target.id === 'facebook_link2') {
                 return;
             } else {
 
