@@ -6,5 +6,5 @@ ne mobilité 2030
 
 ```powershell
 npm install
-gulp build
+node_modules\.bin\gulp build
 ```
