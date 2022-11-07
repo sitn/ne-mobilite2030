@@ -25,7 +25,7 @@
             <h3>Le site NE Mobilité 2030 sera diaponible dès le xx.12.2015.<br />
             Pour toutes autres questions: <span class="mail" data-eml-pre="&#109;&#111;&#98;&#105;&#108;&#105;&#116;&#101;&#50;&#48;&#51;&#48;" data-eml-post="&#110;&#101;&#46;&#99;&#104;" data-msg="&#109;&#111;&#98;&#105;&#108;&#105;&#116;&#101;&#50;&#48;&#51;&#48;&#064;&#110;&#101;&#46;&#99;&#104;" data-style='email' data-attr=''></span></h3>
         </article>
-        <script src="js/jquery-1.11.2.min.js"></script>
+        <script src="js/jquery-3.6.1.min.js"></script>
         <script type="text/javascript">
             /* Init encode email function */
             jQuery(document).ready(function(){function e(e,a,t,r,n){r="undefined"!=typeof r?r:"",n="undefined"!=typeof n?n:"";var u="";""!=e&&""!=a&&(u=e+"&#64;"+a);u.replace("&#64;"," (at) "),t.replace("&#64;"," (at) ");u=u.replace("&#64;","@"),t=t.replace("&#64;","@");var i='class="'+r+'"';return"<a "+i+' href="mailto:'+u+n+'">'+t+"</a>"}(function(){jQuery("span.mail").each(function(a,t){var r=jQuery(this).data("eml-pre"),n=jQuery(this).data("eml-post"),u=jQuery(this).data("msg"),i=jQuery(this).data("style"),s=jQuery(this).data("attr"),y=jQuery(this).parent();jQuery(this).remove(),y.append(e(r,n,u,i,s))})})()});

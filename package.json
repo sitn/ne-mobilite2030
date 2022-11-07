@@ -4,7 +4,6 @@
   "description": "front-end ne2030",
   "main": "gulpfile.js",
   "dependencies": {
-    "ecstatic": "^3.3.2",
     "event-stream": "^4.0.1",
     "fs": "0.0.1-security",
     "gulp": "^3.9.1",
@@ -15,7 +14,6 @@
     "gulp-raster": "^0.2.0",
     "gulp-rename": "^1.4.0",
     "gulp-ssg": "^3.0.0",
-    "http": "0.0.0",
     "mustache": "^3.2.1"
   },
   "devDependencies": {},
