@@ -5,8 +5,6 @@ var gulp = require('gulp'),
     fs = require('fs'),
     es = require('event-stream'),
     mustache = require('mustache'),
-    http = require('http'),
-    ecstatic = require('ecstatic'),
     less = require('gulp-less'),
     autoprefixer = require('gulp-autoprefixer'),
     raster = require('gulp-raster'),
@@ -73,16 +71,6 @@ gulp.task('static', function () {
     gulp.src('src/static/**/*')
         .pipe(gulp.dest('dist/'));
 });
-
-/*gulp.task('watch', function() {
-  http.createServer(
-    ecstatic({root: __dirname + '/dist/home'})
-  ).listen(4000);
-  console.log("Preview at http://localhost:4000");
-
-  gulp.watch('src/*.markdown', ['html']);
-  gulp.watch('templates/*.html', ['html']);
-});*/
 
 gulp.task('build', ['raster', 'static', 'html', 'less']);
 
