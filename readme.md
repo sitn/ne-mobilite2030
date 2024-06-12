@@ -3,8 +3,13 @@ ne mobilité 2030
 # Requirements
 
 * npm
+* gulp (npm i -g gulp)
 
-```powershell
+# Getting started
+
+```sh
 npm install
-node_modules\.bin\gulp build
+gulp build
 ```
+
+Ensuite, ouvrir un live-server dans le dossier dist généré
